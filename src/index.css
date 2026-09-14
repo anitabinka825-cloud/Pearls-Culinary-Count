@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  --color-brand-pink: #DE1B76;
+  --color-brand-pink-hover: #B8125C;
+  --color-brand-pink-light: #FDF2F7;
+  --color-brand-pink-border: #F9A8D4;
+  --color-brand-gold: #C5A059;
+  --color-brand-gold-light: #F8F5EE;
+  --color-brand-dark: #121214;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    color: #1a1a1a;
+  }
+
+  h1, h2, h3, h4, .font-serif {
+    font-family: var(--font-serif);
+  }
+}
+
