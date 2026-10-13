@@ -1,48 +1,5 @@
-export type ProductCategory =
-  | 'cakes'
-  | 'pastries'
-  | 'bread'
-  | 'food'
-  | 'catering'
-  | 'training'
-  | 'lifestyle';
-
-export type ProductAvailability =
-  | 'available_to_order'
-  | 'made_to_order'
-  | 'in_stock'
-  | 'preorder';
-
-export interface ProductSpec {
-  label: string;
-  value: string;
-}
-
-export interface Product {
-  id: string;
-  name: string;
-  description: string;
-  category: ProductCategory;
-  categoryName: string;
-  image: string;
-  imageAlt: string;
-  images?: string[];
-  price: string; // Display price e.g. "Price on enquiry" or "From GH₵ 250"
-  priceNumeric?: number; // Optional numeric base price in GHS for future checkout
-  priceFormatted?: string; // Formatted price e.g. "GH₵ 350.00"
-  salePrice?: number;
-  availability: ProductAvailability;
-  stock?: number;
-  stockQuantity?: number;
-  madeToOrder?: boolean;
-  leadTime?: string;
-  servings?: string;
-  storageInfo?: string;
-  customizable: boolean;
-  featured: boolean;
-  tags?: string[];
-  specs?: ProductSpec[];
-}
+export * from './product';
+export * from './auth';
 
 export interface CategoryItem {
   id: string;
@@ -146,6 +103,9 @@ export type AppRoute =
   | '/contact'
   | '/enquiry'
   | '/account'
+  | '/login'
+  | '/register'
+  | '/forgot-password'
   | '/cart'
   | '/checkout'
   | `/product/${string}`;

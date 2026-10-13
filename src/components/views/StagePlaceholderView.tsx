@@ -25,9 +25,9 @@ export const StagePlaceholderView: React.FC<StagePlaceholderViewProps> = ({
     account: {
       icon: <User className="w-8 h-8 text-[#DE1B76]" />,
       title: 'Customer Accounts & Portal',
-      stage: 'Stage 1 Architecture Preview',
+      stage: 'Future Commerce Integration',
       summary:
-        'A dedicated customer portal is planned for Stage 2, enabling seamless order tracking, saved Accra delivery addresses, and personal wishlists.',
+        'A dedicated extended customer portal is planned for subsequent backend stages, enabling advanced order tracking, saved Accra delivery addresses, and personal wishlists.',
       upcomingFeatures: [
         'Secure customer registration & password reset',
         'Saved delivery addresses across Accra',
@@ -39,9 +39,9 @@ export const StagePlaceholderView: React.FC<StagePlaceholderViewProps> = ({
     cart: {
       icon: <ShoppingBag className="w-8 h-8 text-[#DE1B76]" />,
       title: 'Shopping Cart',
-      stage: 'Stage 1 Architecture Preview',
+      stage: 'Future Commerce Integration',
       summary:
-        'Your interactive shopping cart foundation is being prepared. In Stage 1, orders and inquiries are handled directly with our team on WhatsApp.',
+        'Your interactive shopping cart foundation is being prepared for a future commerce stage. Orders and inquiries are currently handled directly with our team on WhatsApp.',
       upcomingFeatures: [
         'Live quantity adjustments & subtotal calculations',
         'Custom order notes & celebration inscriptions',
@@ -53,9 +53,9 @@ export const StagePlaceholderView: React.FC<StagePlaceholderViewProps> = ({
     checkout: {
       icon: <CreditCard className="w-8 h-8 text-[#DE1B76]" />,
       title: 'Secure Checkout & Payments',
-      stage: 'Stage 1 Architecture Preview',
+      stage: 'Future Commerce Integration',
       summary:
-        'Checkout processing is reserved for Stage 2. To place an order now, connect directly with Pearls Culinary Counts via WhatsApp or phone.',
+        'Checkout processing is reserved for subsequent backend stages. To place an order now, connect directly with Pearls Culinary Counts via WhatsApp or phone.',
       upcomingFeatures: [
         'Paystack card, Mobile Money (MTN, Telecel, AT) integration',
         'Cash on delivery & pickup payment options',
@@ -98,7 +98,7 @@ export const StagePlaceholderView: React.FC<StagePlaceholderViewProps> = ({
           <div className="bg-neutral-50 rounded-2xl p-6 text-left border border-neutral-100 space-y-3">
             <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-neutral-500">
               <Lock className="w-3.5 h-3.5 text-[#C5A059]" />
-              <span>Architected for Stage 2 Integration</span>
+              <span>Planned Future Features</span>
             </div>
             <ul className="space-y-2 text-xs sm:text-sm text-neutral-700">
               {config.upcomingFeatures.map((feat, i) => (

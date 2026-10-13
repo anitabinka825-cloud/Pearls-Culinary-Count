@@ -15,7 +15,7 @@ export const BUSINESS_CONFIG: BusinessConfig = {
   email: '', // Not verified - phone and WhatsApp are primary contact channels in Accra
   socials: {
     whatsapp: 'https://wa.me/233552471271',
-    // In Stage 1, social media channels are configured directly by the business owner
+    // In Stage 2A, social media channels are configured directly by the business owner
     instagram: '',
     facebook: '',
     tiktok: '',
@@ -37,7 +37,7 @@ export const createWhatsAppUrl = (customText?: string): string => {
   return `${BUSINESS_CONFIG.whatsappLink}?text=${message}`;
 };
 
-// Temporary Stage 1 demonstration locations. Final delivery areas and fees will be managed by the Admin Dashboard.
+// Temporary Stage 2A demonstration locations. Final delivery areas and fees will be managed by the Admin Dashboard.
 export const ACCRA_DELIVERY_AREAS = [
   'Customer Pickup in Accra',
   'Airport Residential',

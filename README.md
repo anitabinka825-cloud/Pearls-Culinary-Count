@@ -4,135 +4,130 @@
 **Motto**: Beautifully made. Thoughtfully prepared.  
 **Location**: Accra, Ghana  
 **Phone & WhatsApp**: 0552471271 (+233 55 247 1271) • [wa.me/233552471271](https://wa.me/233552471271)  
+**Current Architecture Status**: **Stage 3 — Customer Accounts & Authentication**
 
 ---
 
 ## 1. Project Purpose
 
-**Pearls Culinary Counts** is an Accra-based culinary and lifestyle enterprise delivering celebration cakes, artisan pastries, fresh bread, savory Ghanaian cuisine, full event catering, culinary masterclasses, and curated lifestyle accessories (handbags, jewellery, and perfumes).
+**Pearls Culinary Counts** is an Accra-based culinary and lifestyle enterprise delivering celebration cakes, artisan pastries, fresh bread, savory Ghanaian cuisine, full event catering, practical culinary training, and curated lifestyle accessories (structured handbags, pearl jewellery, and signature perfumes).
 
-This web application serves as the primary digital storefront and client inquiry portal for Pearls Culinary Counts, enabling customers across Greater Accra to explore curated catalogues, review pricing guides and specifications, submit bespoke cake and catering commissions, and communicate directly with the kitchen and customer care team via WhatsApp.
+This web application serves as the primary digital storefront, catalogue exploration portal, customer authentication center, and customer inquiry hub for Pearls Culinary Counts, enabling customers across Greater Accra to explore verified product catalogues, register and manage accounts, verify emails, reset passwords, and communicate directly with the kitchen and customer care team via WhatsApp.
 
 ---
 
 ## 2. Technology Stack
 
-- **Framework**: React 18 + TypeScript + Vite
-- **Routing**: `react-router-dom` v7 with clean semantic path routing
+- **Framework**: React 19
+- **Language**: TypeScript
+- **Build Tool**: Vite
+- **Routing**: `react-router-dom` 7 (semantic slug routing with legacy ID backwards compatibility)
+- **Authentication**: **Firebase Authentication** (Client SDK, Email/Password + Google Sign-In)
 - **Styling**: Tailwind CSS with custom brand design tokens:
   - Primary Brand Accent: Hot Pink (`#DE1B76`)
   - Dark Contrast: Charcoal / Black (`#121214`)
   - Subtle Accent: Warm Gold (`#C5A059`)
   - Clean Backgrounds: Off-white and pure white (`#FAFAFA`, `#FFFFFF`)
 - **Icons**: `lucide-react`
-- **Build System**: Vite
+- **Animations**: `motion`
 
 ---
 
-## 3. Current Stage 1 Scope
+## 3. Current Stage Scope (Stage 3 — Customer Accounts & Authentication)
 
-This codebase represents **Stage 1: Production Frontend Foundation**. It focuses on technical stability, responsive design, verified brand identity, and honest customer-facing inquiry flows:
+This codebase represents **Stage 3: Customer Accounts & Authentication**. It integrates robust, production-structured customer authentication and account management on top of the completed Stage 2A catalogue foundation:
 
-- **Route Architecture**: Real URL pathways including:
-  - `/` (Home showcase, signature offerings, category navigation, brand values, training teasers)
-  - `/shop` (Curated catalogue with search and category filtering)
-  - `/cakes` (Specialty cake portfolio and custom commissions)
-  - `/pastries` (Artisan savory pastries, fruit tartlets, and bread)
-  - `/food` (Ghanaian delicacies, continental cuisine, and event catering)
-  - `/training` (Hands-on culinary workshops and masterclasses)
-  - `/about` (Brand story, craft ethos, and Accra operations)
-  - `/contact` (Direct phone, WhatsApp, and inquiry form)
-  - `/enquiry` (Dedicated bespoke order and commission form)
-  - `/product/:id` (Dedicated product detail view with multi-image gallery, lead times, and specifications)
-  - `/account`, `/cart`, `/checkout` (Clean Stage 1 previews explaining future activation)
-- **Order & Commission Workflow**: Transparent "Continue in WhatsApp" workflow. Customer inputs (desired flavors, portions, preferred future dates, pickup or Accra delivery areas) are formatted directly into a prefilled WhatsApp message addressed to official business lines (`0552471271`).
-- **Data Integrity**: Grounded data models without invented testimonials, fake customer reviews, or unverified claims.
-- **Image Fallbacks**: Robust image error handling ensuring graceful fallback if external assets fail to load.
+- **Firebase Authentication Integration**: Real client-side Firebase Auth initialization supporting Email/Password and Google Sign-In. Validates all required environment variables (`VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_AUTH_DOMAIN`, `VITE_FIREBASE_PROJECT_ID`, `VITE_FIREBASE_STORAGE_BUCKET`, `VITE_FIREBASE_MESSAGING_SENDER_ID`, `VITE_FIREBASE_APP_ID`).
+- **Centralized Authentication Context (`AuthContext`)**: Single authoritative state provider exposing `currentUser`, `userProfile`, loading states, `signUp`, `signIn`, `signInWithGoogle`, `signOut`, `sendPasswordReset`, `sendEmailVerification`, and user reloading.
+- **Customer Registration (`/register`)**: Account creation with validation for first name, last name, email, and password confirmation. Persistent customer phone/profile fields beyond Firebase Auth-supported attributes will be implemented with the future backend.
+- **Customer Login (`/login`)**: Secure sign-in with error handling, loading states, Google sign-in option, and automatic post-login redirection.
+- **Password Recovery (`/forgot-password`)**: Secure password reset email workflow with user-friendly confirmation messages avoiding account enumeration risks.
+- **Email Verification**: Real Firebase email verification with status notices, resend verification actions, and refresh verification status triggers.
+- **Authenticated Account Dashboard (`/account`)**: Replaces placeholders with a fully realized customer profile manager displaying first name, last name, email identity, phone number (or "Not provided" when not present in Firebase Auth), and upcoming feature placeholders.
+- **Protected Route Enforcement (`ProtectedRoute`)**: Reusable route guard redirecting unauthenticated visitors attempting to access `/account` to `/login`, while keeping public catalogue browsing completely open.
+- **Header & Navigation Synchronization**: Intelligently adapts between guest state and authenticated state.
 
 ---
 
-## 4. Local Development & Deployment
+## 4. Planned Capabilities for Later Stages (Stage 4 & Beyond)
 
-### Prerequisites
-- Node.js (v18 or higher recommended)
-- npm (v9 or higher)
-
-### Setup & Local Execution
-```bash
-# Install dependencies
-npm install
-
-# Start local development server on port 3000
-npm run dev
-
-# Run TypeScript and linter checks
-npm run lint
-
-# Build production bundle
-npm run build
-```
+The following capabilities are planned for subsequent development stages and are **NOT** part of the current Stage 3 codebase:
+- **Shopping Cart Persistence & Online Checkout**: Persistent cart storage, delivery fee calculations, and online payment gateway integration (Paystack).
+- **Order Tracking & Management**: Live order fulfillment tracking and history.
+- **Saved Delivery Addresses & Wishlist Persistence**: Persistent saved delivery address books and user wishlists.
+- **Backend Database & Admin Dashboard**: PostgreSQL/Cloud SQL backend and administrative management interface.
+- **SMS & Automated Notifications**: Sailup SMS gateway and transactional email notifications.
 
 ---
 
-## 5. Render Static Site Deployment & SPA Routing
+## 5. Project File Structure
 
-The application is fully configured for deployment as a **Render Static Site**:
+- `/src/`
+  - `App.tsx`: Main routing and layout integration wrapped in `AuthProvider`.
+  - `main.tsx`: DOM application entry point.
+  - `services/`: `firebase.ts` (Firebase client initialization and environment validation).
+  - `context/`: `AuthContext.tsx` (Authoritative authentication state and handlers).
+  - `components/`:
+    - `auth/`: `ProtectedRoute.tsx` guard component.
+    - `layout/`: `Header.tsx`, `Footer.tsx`, `CustomerCareButton.tsx`.
+    - `views/`: `HomeView.tsx`, `ShopView.tsx`, `CakesView.tsx`, `PastriesView.tsx`, `FoodView.tsx`, `TrainingView.tsx`, `AboutView.tsx`, `ContactView.tsx`, `EnquiryView.tsx`, `ProductDetailView.tsx`, `LoginView.tsx`, `RegisterView.tsx`, `ForgotPasswordView.tsx`, `AccountView.tsx`, `NotFoundView.tsx`.
+    - `products/`: `ProductCard.tsx`, `ProductGrid.tsx`, `ProductDetailModal.tsx`.
+  - `config/`: `business.ts` (business profile, contact info, Accra delivery locations).
+  - `data/`: `products.ts`, `categories.ts` (sample catalogue foundation).
+  - `types/`: TypeScript definitions (`product.ts`, `auth.ts`, `index.ts`).
 
-- **Build Command**: `npm run build`
-- **Publish Directory**: `dist`
+---
+
+## 6. Routing & Deployment (SPA Rewrites)
+
 - **Single-Page Application (SPA) Rewrites**:
-  To prevent 404 errors when users directly enter deep URLs (such as `/cakes`, `/food`, `/enquiry`, or `/product/:id`) or refresh the browser, the application provides:
-  1. `render.yaml` at the project root with the following route definition:
-     ```yaml
-     routes:
-       - type: rewrite
-         source: /*
-         destination: /index.html
-     ```
+  To ensure direct URL visits and browser refreshes resolve correctly without 404 errors, the application includes:
+  1. `render.yaml` at the project root with SPA rewrite rules (`source: /*`, `destination: /index.html`).
   2. `public/_redirects` included in the build output (`/*  /index.html  200`).
 
 ### Verified Direct URLs:
-All of the following paths resolve cleanly to `index.html` and are handled by `react-router-dom`:
-- `/`
-- `/shop`
-- `/cakes`
-- `/pastries`
-- `/food`
-- `/training`
-- `/about`
-- `/contact`
-- `/enquiry`
-- `/account`
-- `/cart`
-- `/checkout`
-- `/product/:id`
+- `/` (Home)
+- `/shop` (Catalogue Discovery)
+- `/cakes` (Celebration & Wedding Cakes)
+- `/pastries` (Savory & Sweet Pastries, including Artisan Bread and Loaves)
+- `/food` (Ghanaian & Continental Cuisine, including Event Catering & Buffets)
+- `/training` (Masterclasses & Workshops)
+- `/about` (Brand Story & Heritage)
+- `/contact` (Contact & Location Information)
+- `/enquiry` (Bespoke Commission Form)
+- `/login` (Customer Sign In)
+- `/register` (Customer Account Registration)
+- `/forgot-password` (Password Recovery)
+- `/account` (Authenticated Customer Profile - Protected)
+- `/product/:slug` (Canonical Product Detail)
+- `/product/id/:id` (Legacy ID Product Detail Compatibility)
 
 ---
 
-## 6. Environment-Variable Approach & Security Warning
+## 7. Environment Variables & Firebase Configuration
 
-### Frontend Client-Side Environment
-This project in Stage 1 is an entirely client-side application. No Gemini API keys or external secrets are required for the customer storefront to function.
+### Required Environment Variables (`.env` / `.env.example`)
+To enable Firebase Authentication in production or local development, provide all required variables in your `.env` file (see `.env.example`):
 
-### ⚠️ Security Warning
-> **NEVER store secret API keys, payment private keys, or administrative credentials in client-side code or `.env` files exposed to Vite.**
->
-> Secret credentials (such as Paystack secret keys, database credentials, or private SMS tokens) must **ONLY** reside in secure server-side environments (`/api/*` routes, Cloud Run environment secrets, or backend microservices). Exposing private keys in client-side bundles creates severe security vulnerabilities.
+```env
+VITE_FIREBASE_API_KEY=your_firebase_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_project_id.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+```
+
+### Local Development Setup:
+1. Create a Firebase project in the [Firebase Console](https://console.firebase.google.com/).
+2. Enable **Authentication** with **Email/Password** and **Google** sign-in providers.
+3. Register a Web App in your Firebase project settings to obtain your configuration credentials.
+4. Copy `.env.example` to `.env` and fill in your Firebase project credentials.
+5. Run `npm install` and `npm run dev` to start the development server.
 
 ---
 
-## 7. Stage 1 Demo Catalogue & Delivery Notice
+## 8. Sample Catalogue & Delivery Notice
 
-- **Demo Catalogue**: All items, prices, lead times, and mock inventory in `src/data/products.ts` represent a demonstration catalogue for layout and workflow validation. Real-time menu management will activate in Stage 2.
-- **Accra Delivery Locations**: Delivery areas listed in `src/config/business.ts` are temporary demonstration areas. Customer pickup in Accra and final delivery availability/fees are confirmed individually upon WhatsApp enquiry.
-
----
-
-## 8. Future Architecture (Planned for Stage 2)
-
-Stage 2 will introduce backend and transactional infrastructure:
-- **Authentication**: Customer account sign-up and order tracking.
-- **Persistent Database**: Cloud Firestore or PostgreSQL for menu management, real-time inventory, and order history.
-- **Payment Processing**: Direct mobile money (MTN MoMo, Telecel Cash, AT Money) and card payments integrated via Paystack Ghana.
-- **Administrative Portal**: Secure kitchen dashboard for managing orders, updating seasonal prices, and managing class enrollment.
-- **Automated Notifications**: Order status updates via SMS and email.
+- **Sample Catalogue Foundation**: All products, categories, variants, and pricing structures in `src/data/products.ts` and `src/data/categories.ts` serve as the validated sample catalogue.
+- **Accra Delivery Locations**: Delivery zones listed in `src/config/business.ts` represent active Accra coverage areas. Customer pickup and final delivery scheduling/fees are confirmed individually via direct WhatsApp enquiry.

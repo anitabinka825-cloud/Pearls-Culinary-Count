@@ -1,7 +1,6 @@
 import React from 'react';
 import { ProductGrid } from '../products/ProductGrid';
 import { SectionHeading } from '../ui/SectionHeading';
-import { ALL_PRODUCTS } from '../../data/products';
 import { Product } from '../../types';
 import { MessageCircle, Sparkles } from 'lucide-react';
 import { BUSINESS_CONFIG, createWhatsAppUrl } from '../../config/business';
@@ -41,7 +40,6 @@ export const ShopView: React.FC<ShopViewProps> = ({
 
         {/* Product Grid with Filters */}
         <ProductGrid
-          products={ALL_PRODUCTS}
           onViewProduct={onViewProduct}
           showFilters={true}
         />

@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { BUSINESS_CONFIG, createWhatsAppUrl } from '../../config/business';
 import { AppRoute } from '../../types';
+import { useAuth } from '../../context/AuthContext';
 
 interface HeaderProps {
   currentRoute: AppRoute;
@@ -27,6 +28,7 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { currentUser, userProfile, signOut } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -146,25 +148,54 @@ export const Header: React.FC<HeaderProps> = ({
           })}
         </nav>
 
-        {/* Right Section: Actions & Future Architecture E-Commerce Triggers */}
+        {/* Right Section: Actions & Auth Triggers */}
         <div className="flex items-center gap-2 sm:gap-3">
           
-          {/* Future Account */}
-          <button
-            type="button"
-            onClick={() => onNavigate('/account')}
-            title="Account & Profile (Stage 1 preview)"
-            aria-label="Customer Account"
-            className="p-2 rounded-full text-neutral-600 hover:text-[#DE1B76] hover:bg-[#FDF2F7] transition-colors"
-          >
-            <User className="w-4 h-4" />
-          </button>
+          {/* Auth State (Desktop) */}
+          {currentUser ? (
+            <div className="hidden md:flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => onNavigate('/account')}
+                title="Customer Account"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FDF2F7] text-[#DE1B76] text-xs font-semibold hover:bg-[#fae2ee] transition-colors"
+              >
+                <User className="w-3.5 h-3.5" />
+                <span>{userProfile?.firstName || 'Account'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => signOut()}
+                className="text-xs font-medium text-neutral-600 hover:text-red-600 px-2 py-1 transition-colors cursor-pointer"
+                title="Sign Out"
+              >
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <div className="hidden md:flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => onNavigate('/login')}
+                className="text-xs font-semibold text-neutral-700 hover:text-[#DE1B76] px-3 py-1.5 transition-colors cursor-pointer"
+              >
+                Sign In
+              </button>
+              <button
+                type="button"
+                onClick={() => onNavigate('/register')}
+                className="text-xs font-semibold px-3.5 py-1.5 rounded-full bg-[#DE1B76] text-white hover:bg-[#c41465] transition-colors shadow-2xs cursor-pointer"
+              >
+                Create Account
+              </button>
+            </div>
+          )}
 
-          {/* Future Cart */}
+          {/* Cart Icon */}
           <button
             type="button"
             onClick={() => onNavigate('/cart')}
-            title="Cart (Stage 1 preview)"
+            title="Cart"
             aria-label="Shopping Cart"
             className="p-2 rounded-full text-neutral-600 hover:text-[#DE1B76] hover:bg-[#FDF2F7] transition-colors relative"
           >
@@ -233,28 +264,66 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           <div className="pt-3 border-t border-neutral-100 space-y-2.5">
-            <div className="grid grid-cols-2 gap-2 mb-2">
-              <button
-                type="button"
-                onClick={() => {
-                  onNavigate('/account');
-                  setMobileMenuOpen(false);
-                }}
-                className="flex items-center justify-center gap-1.5 p-2.5 rounded-xl border border-neutral-200 text-xs font-medium text-neutral-700 hover:bg-neutral-50"
-              >
-                <User className="w-3.5 h-3.5 text-[#DE1B76]" />
-                <span>Account</span>
-              </button>
+            {currentUser ? (
+              <div className="grid grid-cols-2 gap-2 mb-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    onNavigate('/account');
+                    setMobileMenuOpen(false);
+                  }}
+                  className="flex items-center justify-center gap-1.5 p-2.5 rounded-xl bg-[#FDF2F7] text-xs font-semibold text-[#DE1B76]"
+                >
+                  <User className="w-3.5 h-3.5" />
+                  <span>Account</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    signOut();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="flex items-center justify-center gap-1.5 p-2.5 rounded-xl border border-neutral-200 text-xs font-medium text-red-600 hover:bg-red-50"
+                >
+                  <span>Sign Out</span>
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-2 mb-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    onNavigate('/login');
+                    setMobileMenuOpen(false);
+                  }}
+                  className="flex items-center justify-center gap-1.5 p-2.5 rounded-xl border border-neutral-200 text-xs font-semibold text-neutral-800 hover:bg-neutral-50"
+                >
+                  <span>Sign In</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onNavigate('/register');
+                    setMobileMenuOpen(false);
+                  }}
+                  className="flex items-center justify-center gap-1.5 p-2.5 rounded-xl bg-[#DE1B76] text-xs font-semibold text-white"
+                >
+                  <span>Create Account</span>
+                </button>
+              </div>
+            )}
+
+            <div className="mb-2">
               <button
                 type="button"
                 onClick={() => {
                   onNavigate('/cart');
                   setMobileMenuOpen(false);
                 }}
-                className="flex items-center justify-center gap-1.5 p-2.5 rounded-xl border border-neutral-200 text-xs font-medium text-neutral-700 hover:bg-neutral-50"
+                className="w-full flex items-center justify-center gap-1.5 p-2.5 rounded-xl border border-neutral-200 text-xs font-medium text-neutral-700 hover:bg-neutral-50"
               >
                 <ShoppingBag className="w-3.5 h-3.5 text-[#DE1B76]" />
-                <span>Cart</span>
+                <span>Shopping Cart</span>
               </button>
             </div>
 

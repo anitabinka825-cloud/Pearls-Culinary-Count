@@ -7,8 +7,10 @@ import {
   MapPin,
   Clock,
   ExternalLink,
+  CheckCircle2,
 } from 'lucide-react';
 import { Product } from '../../types';
+import { productRepository } from '../../services/productRepository';
 import { createWhatsAppUrl } from '../../config/business';
 
 interface ProductDetailModalProps {
@@ -37,15 +39,27 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
 
   if (!product) return null;
 
-  const whatsappMessage = `Hello Pearls Culinary Counts, I am inquiring about the "${product.name}" (${product.categoryName}). Could you provide more details regarding availability and ordering for Accra?`;
+  const productPath = `/product/${product.slug || product.id}`;
+  const productAbsoluteUrl =
+    typeof window !== 'undefined'
+      ? `${window.location.origin}${productPath}`
+      : productPath;
+
+  const displayPrice = productRepository.formatProductPrice(product);
+
+  const whatsappMessage = `Hello Pearls Culinary Counts, I am inquiring about "${product.name}" (${product.categoryName || product.category}). Displayed catalogue price: ${displayPrice}. Reference link: ${productAbsoluteUrl}. Could you please share availability and order details for Accra fulfillment?`;
   const whatsappUrl = createWhatsAppUrl(whatsappMessage);
 
   const handleOpenFullPage = () => {
     onClose();
-    navigate(`/product/${product.id}`);
+    navigate(productPath);
   };
 
-  const displayPrice = product.priceFormatted || product.price;
+  const fallbackImage =
+    'https://images.unsplash.com/photo-1535141192574-5d4897c13136?q=80&w=1000&auto=format&fit=crop';
+  const displayImage = imgError
+    ? fallbackImage
+    : product.primaryImage || product.image || fallbackImage;
 
   return (
     <div
@@ -77,15 +91,21 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
           {/* Product Image */}
           <div className="relative bg-neutral-100 h-64 md:h-full min-h-[300px]">
             <img
-              src={imgError ? 'https://images.unsplash.com/photo-1535141192574-5d4897c13136?q=80&w=1000&auto=format&fit=crop' : product.image}
-              alt={product.imageAlt}
+              src={displayImage}
+              alt={product.imageAlt || product.name}
               onError={() => setImgError(true)}
               className="w-full h-full object-cover"
             />
-            <div className="absolute top-4 left-4">
+            <div className="absolute top-4 left-4 flex flex-col gap-1.5">
               <span className="bg-white/95 backdrop-blur-xs text-neutral-900 text-xs font-semibold px-3 py-1 rounded-full shadow-xs border border-white/60">
-                {product.categoryName}
+                {product.categoryName || product.category}
               </span>
+              {product.featured && (
+                <span className="inline-flex items-center gap-1 bg-[#121214]/90 text-[#C5A059] text-[10px] font-medium px-2 py-0.5 rounded-full border border-[#C5A059]/40">
+                  <Sparkles className="w-2.5 h-2.5" />
+                  <span>Featured</span>
+                </span>
+              )}
             </div>
           </div>
 
@@ -108,14 +128,21 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               </div>
 
               {/* Price guide */}
-              <div className="p-3 bg-[#FDF2F7] rounded-xl border border-[#F9A8D4]/40 flex items-center justify-between">
+              <div className="p-3.5 bg-[#FDF2F7] rounded-xl border border-[#F9A8D4]/40 flex items-center justify-between">
                 <div>
                   <span className="text-[11px] uppercase tracking-wider text-neutral-500 font-semibold block">
                     Price Guide
                   </span>
-                  <span className="font-serif font-bold text-lg text-[#DE1B76]">
-                    {displayPrice}
-                  </span>
+                  <div className="flex items-baseline gap-2">
+                    <span className="font-serif font-bold text-lg text-[#DE1B76]">
+                      {displayPrice}
+                    </span>
+                    {typeof product.compareAtPrice === 'number' && (
+                      <span className="text-xs text-neutral-400 line-through">
+                        GH₵ {product.compareAtPrice}
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <span className="text-xs text-neutral-600 bg-white px-2.5 py-1 rounded-md border border-[#F9A8D4]/30">
                   Accra Orders
@@ -124,7 +151,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
 
               {/* Description */}
               <p className="text-neutral-600 text-sm leading-relaxed">
-                {product.description}
+                {product.shortDescription || product.description}
               </p>
 
               {/* Specs & Lead time */}
@@ -139,6 +166,12 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                   <div className="flex items-center gap-1.5 text-neutral-600 py-0.5">
                     <span className="font-medium text-neutral-700">Portions:</span>
                     <span>{product.servings}</span>
+                  </div>
+                )}
+                {product.minimumOrderQuantity && (
+                  <div className="flex items-center gap-1.5 text-neutral-600 py-0.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                    <span>Minimum order: {product.minimumOrderQuantity} unit(s)</span>
                   </div>
                 )}
               </div>
@@ -181,7 +214,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 onClick={handleOpenFullPage}
                 className="w-full inline-flex items-center justify-center gap-1.5 text-neutral-600 hover:text-neutral-900 text-xs font-semibold py-1.5 transition-colors"
               >
-                <span>View Full Product Page & Specs</span>
+                <span>View Full Product Page & Options</span>
                 <ExternalLink className="w-3.5 h-3.5" />
               </button>
             </div>

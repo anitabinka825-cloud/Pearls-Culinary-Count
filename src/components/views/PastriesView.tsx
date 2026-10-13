@@ -14,10 +14,6 @@ export const PastriesView: React.FC<PastriesViewProps> = ({
   onViewProduct,
   onOpenCustomOrder,
 }) => {
-  const pastriesProducts = ALL_PRODUCTS.filter(
-    (p) => p.category === 'pastries' || p.category === 'bread'
-  );
-
   return (
     <div className="py-12 lg:py-16 bg-white min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
@@ -85,13 +81,10 @@ export const PastriesView: React.FC<PastriesViewProps> = ({
 
         {/* Product Grid */}
         <div className="pt-4">
-          <h2 className="font-serif text-2xl sm:text-3xl font-bold text-neutral-900 mb-6">
-            Explore Pastries & Bread
-          </h2>
           <ProductGrid
-            products={pastriesProducts}
+            initialCategory="pastries"
             onViewProduct={onViewProduct}
-            showFilters={false}
+            showFilters={true}
           />
         </div>
 

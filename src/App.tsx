@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
 import { CustomerCareButton } from './components/layout/CustomerCareButton';
@@ -13,6 +15,10 @@ import { AboutView } from './components/views/AboutView';
 import { ContactView } from './components/views/ContactView';
 import { EnquiryView } from './components/views/EnquiryView';
 import { ProductDetailView } from './components/views/ProductDetailView';
+import { LoginView } from './components/views/LoginView';
+import { RegisterView } from './components/views/RegisterView';
+import { ForgotPasswordView } from './components/views/ForgotPasswordView';
+import { AccountView } from './components/views/AccountView';
 import { NotFoundView } from './components/views/NotFoundView';
 import { StagePlaceholderView } from './components/views/StagePlaceholderView';
 import { ProductDetailModal } from './components/products/ProductDetailModal';
@@ -74,149 +80,158 @@ export default function App() {
   const currentRoute = (location.pathname as AppRoute) || '/';
 
   return (
-    <div className="min-h-screen flex flex-col bg-white text-neutral-900 selection:bg-[#FDF2F7] selection:text-[#DE1B76]">
-      <ScrollToTop />
+    <AuthProvider>
+      <div className="min-h-screen flex flex-col bg-white text-neutral-900 selection:bg-[#FDF2F7] selection:text-[#DE1B76]">
+        <ScrollToTop />
 
-      {/* Global Header */}
-      <Header
-        currentRoute={currentRoute}
-        onNavigate={handleNavigate}
-        wishlistCount={0}
-        cartCount={0}
-      />
+        {/* Global Header */}
+        <Header
+          currentRoute={currentRoute}
+          onNavigate={handleNavigate}
+          wishlistCount={0}
+          cartCount={0}
+        />
 
-      {/* Main Routed View Area */}
-      <main id="main-content" className="flex-1">
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <HomeView
-                onExploreProducts={() => navigate('/shop')}
-                onExploreCategory={handleExploreCategory}
-                onNavigateToTraining={() => navigate('/training')}
-                onOpenCustomOrder={handleOpenCustomOrder}
-                onContactClick={() => navigate('/contact')}
-              />
-            }
-          />
-          <Route
-            path="/shop"
-            element={
-              <ShopView
-                onViewProduct={(p) => setSelectedProduct(p)}
-                onOpenCustomOrder={handleOpenCustomOrder}
-              />
-            }
-          />
-          <Route
-            path="/cakes"
-            element={
-              <CakesView
-                onViewProduct={(p) => setSelectedProduct(p)}
-                onOpenCustomOrder={handleOpenCustomOrder}
-              />
-            }
-          />
-          <Route
-            path="/pastries"
-            element={
-              <PastriesView
-                onViewProduct={(p) => setSelectedProduct(p)}
-                onOpenCustomOrder={handleOpenCustomOrder}
-              />
-            }
-          />
-          <Route
-            path="/food"
-            element={
-              <FoodView
-                onViewProduct={(p) => setSelectedProduct(p)}
-                onOpenCustomOrder={handleOpenCustomOrder}
-              />
-            }
-          />
-          <Route
-            path="/training"
-            element={
-              <TrainingView
-                onEnquireProgram={(prog) => handleOpenCustomOrder(prog)}
-              />
-            }
-          />
-          <Route
-            path="/about"
-            element={
-              <AboutView
-                onNavigateShop={() => navigate('/shop')}
-                onNavigateContact={() => navigate('/contact')}
-              />
-            }
-          />
-          <Route path="/contact" element={<ContactView />} />
-          <Route path="/enquiry" element={<EnquiryView />} />
-          <Route
-            path="/product/:id"
-            element={
-              <ProductDetailView onOpenCustomOrder={handleOpenCustomOrder} />
-            }
-          />
-          <Route
-            path="/account"
-            element={
-              <StagePlaceholderView
-                type="account"
-                onNavigateHome={() => navigate('/')}
-                onNavigateShop={() => navigate('/shop')}
-              />
-            }
-          />
-          <Route
-            path="/cart"
-            element={
-              <StagePlaceholderView
-                type="cart"
-                onNavigateHome={() => navigate('/')}
-                onNavigateShop={() => navigate('/shop')}
-              />
-            }
-          />
-          <Route
-            path="/checkout"
-            element={
-              <StagePlaceholderView
-                type="checkout"
-                onNavigateHome={() => navigate('/')}
-                onNavigateShop={() => navigate('/shop')}
-              />
-            }
-          />
-          {/* Catch-all 404 Route */}
-          <Route path="*" element={<NotFoundView />} />
-        </Routes>
-      </main>
+        {/* Main Routed View Area */}
+        <main id="main-content" className="flex-1">
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <HomeView
+                  onExploreProducts={() => navigate('/shop')}
+                  onExploreCategory={handleExploreCategory}
+                  onNavigateToTraining={() => navigate('/training')}
+                  onOpenCustomOrder={handleOpenCustomOrder}
+                  onContactClick={() => navigate('/contact')}
+                />
+              }
+            />
+            <Route
+              path="/shop"
+              element={
+                <ShopView
+                  onViewProduct={(p) => setSelectedProduct(p)}
+                  onOpenCustomOrder={handleOpenCustomOrder}
+                />
+              }
+            />
+            <Route
+              path="/cakes"
+              element={
+                <CakesView
+                  onViewProduct={(p) => setSelectedProduct(p)}
+                  onOpenCustomOrder={handleOpenCustomOrder}
+                />
+              }
+            />
+            <Route
+              path="/pastries"
+              element={
+                <PastriesView
+                  onViewProduct={(p) => setSelectedProduct(p)}
+                  onOpenCustomOrder={handleOpenCustomOrder}
+                />
+              }
+            />
+            <Route
+              path="/food"
+              element={
+                <FoodView
+                  onViewProduct={(p) => setSelectedProduct(p)}
+                  onOpenCustomOrder={handleOpenCustomOrder}
+                />
+              }
+            />
+            <Route
+              path="/training"
+              element={
+                <TrainingView
+                  onEnquireProgram={(prog) => handleOpenCustomOrder(prog)}
+                />
+              }
+            />
+            <Route
+              path="/about"
+              element={
+                <AboutView
+                  onNavigateShop={() => navigate('/shop')}
+                  onNavigateContact={() => navigate('/contact')}
+                />
+              }
+            />
+            <Route path="/contact" element={<ContactView />} />
+            <Route path="/enquiry" element={<EnquiryView />} />
+            <Route
+              path="/product/:slug"
+              element={
+                <ProductDetailView onOpenCustomOrder={handleOpenCustomOrder} />
+              }
+            />
+            <Route
+              path="/product/id/:id"
+              element={
+                <ProductDetailView onOpenCustomOrder={handleOpenCustomOrder} />
+              }
+            />
+            <Route path="/login" element={<LoginView />} />
+            <Route path="/register" element={<RegisterView />} />
+            <Route path="/forgot-password" element={<ForgotPasswordView />} />
+            <Route
+              path="/account"
+              element={
+                <ProtectedRoute>
+                  <AccountView />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/cart"
+              element={
+                <StagePlaceholderView
+                  type="cart"
+                  onNavigateHome={() => navigate('/')}
+                  onNavigateShop={() => navigate('/shop')}
+                />
+              }
+            />
+            <Route
+              path="/checkout"
+              element={
+                <StagePlaceholderView
+                  type="checkout"
+                  onNavigateHome={() => navigate('/')}
+                  onNavigateShop={() => navigate('/shop')}
+                />
+              }
+            />
+            {/* Catch-all 404 Route */}
+            <Route path="*" element={<NotFoundView />} />
+          </Routes>
+        </main>
 
-      {/* Global Footer */}
-      <Footer onNavigate={handleNavigate} />
+        {/* Global Footer */}
+        <Footer onNavigate={handleNavigate} />
 
-      {/* Reusable Product Quick View Modal */}
-      <ProductDetailModal
-        product={selectedProduct}
-        onClose={() => setSelectedProduct(null)}
-        onOpenCustomOrder={(productName) => handleOpenCustomOrder(productName)}
-      />
+        {/* Reusable Product Quick View Modal */}
+        <ProductDetailModal
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+          onOpenCustomOrder={(productName) => handleOpenCustomOrder(productName)}
+        />
 
-      {/* Reusable Bespoke Order / Enquiry Modal */}
-      <CustomOrderModal
-        isOpen={isCustomOrderOpen}
-        onClose={() => setIsCustomOrderOpen(false)}
-        prefillProduct={customOrderPrefill}
-      />
+        {/* Reusable Bespoke Order / Enquiry Modal */}
+        <CustomOrderModal
+          isOpen={isCustomOrderOpen}
+          onClose={() => setIsCustomOrderOpen(false)}
+          prefillProduct={customOrderPrefill}
+        />
 
-      {/* Customer Care "Need Help?" floating entry point */}
-      <CustomerCareButton
-        onOpenCustomOrder={() => handleOpenCustomOrder()}
-      />
-    </div>
+        {/* Customer Care "Need Help?" floating entry point */}
+        <CustomerCareButton
+          onOpenCustomOrder={() => handleOpenCustomOrder()}
+        />
+      </div>
+    </AuthProvider>
   );
 }

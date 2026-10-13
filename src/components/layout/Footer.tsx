@@ -248,10 +248,10 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               {activePolicy === 'privacy' ? (
                 <>
                   <p>
-                    <strong>Pearls Culinary Counts</strong> values customer confidentiality. In Stage 1, order details and contact information provided during custom enquiries or WhatsApp communications are utilized solely to process your orders and address your enquiries in Accra, Ghana.
+                    <strong>Pearls Culinary Counts</strong> values customer confidentiality. Information provided when creating a customer account or submitting WhatsApp enquiries is utilized solely by our team to coordinate orders and address enquiries in Accra, Ghana.
                   </p>
                   <p>
-                    We do not sell or distribute customer contact details to third parties. In future stages, customer authentication and payment processing will adhere to international data security standards.
+                    We do not sell or distribute customer contact details to third parties. Customer account authentication is managed securely through Firebase Authentication.
                   </p>
                 </>
               ) : (
