@@ -54,6 +54,28 @@ export default function App() {
     }
   }, [navigate]);
 
+  // Set absolute URLs for social share cards (OpenGraph / Twitter) using current origin
+  useEffect(() => {
+    const origin = window.location.origin;
+    const imageUrl = `${origin}/favicon.jpg`;
+
+    const updateMeta = (property: string, content: string, isName = false) => {
+      const attr = isName ? 'name' : 'property';
+      let tag = document.querySelector(`meta[${attr}="${property}"]`);
+      if (!tag) {
+        tag = document.createElement('meta');
+        tag.setAttribute(attr, property);
+        document.head.appendChild(tag);
+      }
+      tag.setAttribute('content', content);
+    };
+
+    updateMeta('og:image', imageUrl);
+    updateMeta('og:image:secure_url', imageUrl);
+    updateMeta('twitter:image', imageUrl);
+    updateMeta('og:url', origin + location.pathname);
+  }, [location.pathname]);
+
   const handleNavigate = (route: AppRoute) => {
     navigate(route);
   };
