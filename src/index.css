@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-serif: "Playfair Display", Georgia, serif;
   --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
@@ -17,9 +19,16 @@
     font-family: var(--font-sans);
     color: #1a1a1a;
   }
+  .dark body {
+    background-color: #121214;
+    color: #f3f4f6;
+  }
 
   h1, h2, h3, h4, .font-serif {
     font-family: var(--font-serif);
+  }
+  .dark h1, .dark h2, .dark h3, .dark h4 {
+    color: #ffffff;
   }
 }
 

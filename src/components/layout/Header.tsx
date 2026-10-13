@@ -12,6 +12,7 @@ import {
 import { BUSINESS_CONFIG, createWhatsAppUrl } from '../../config/business';
 import { AppRoute } from '../../types';
 import { useAuth } from '../../context/AuthContext';
+import siteLogoImg from '../../assets/images/pearls_logo_1791881783293.jpg';
 
 interface HeaderProps {
   currentRoute: AppRoute;
@@ -58,8 +59,8 @@ export const Header: React.FC<HeaderProps> = ({
       id="global-header"
       className={`sticky top-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-neutral-100 py-3'
-          : 'bg-white border-b border-neutral-100/80 py-4 sm:py-5'
+          ? 'bg-white/95 dark:bg-[#121214]/95 backdrop-blur-md shadow-sm border-b border-neutral-100 dark:border-neutral-800 py-3'
+          : 'bg-white dark:bg-[#121214] border-b border-neutral-100/80 dark:border-neutral-800 py-4 sm:py-5'
       }`}
     >
       {/* Top Utility Bar for Desktop */}
@@ -106,17 +107,23 @@ export const Header: React.FC<HeaderProps> = ({
           type="button"
           onClick={() => onNavigate('/')}
           id="header-brand-logo"
-          className="group flex flex-col text-left focus:outline-none"
+          className="group flex items-center gap-3 text-left focus:outline-none"
         >
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#DE1B76] ring-4 ring-[#FDF2F7] transition-transform group-hover:scale-125"></span>
-            <span className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-[#121214]">
+          <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-[#C5A059] shadow-md flex-shrink-0 group-hover:scale-105 transition-transform">
+            <img
+              src={siteLogoImg}
+              alt="Pearls Culinary Counts Logo"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="flex flex-col">
+            <span className="font-serif text-lg sm:text-xl font-bold tracking-tight text-[#121214]">
               PEARLS CULINARY <span className="text-[#DE1B76]">COUNTS</span>
             </span>
+            <span className="text-[10px] tracking-[0.15em] uppercase text-neutral-600 font-sans font-medium">
+              Accra, Ghana • {BUSINESS_CONFIG.tagline}
+            </span>
           </div>
-          <span className="text-[10px] tracking-[0.2em] uppercase text-neutral-600 pl-4 font-sans font-medium">
-            Accra, Ghana • {BUSINESS_CONFIG.tagline}
-          </span>
         </button>
 
         {/* Desktop Navigation Links */}
@@ -191,13 +198,15 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           )}
 
+
+
           {/* Cart Icon */}
           <button
             type="button"
             onClick={() => onNavigate('/cart')}
             title="Cart"
             aria-label="Shopping Cart"
-            className="p-2 rounded-full text-neutral-600 hover:text-[#DE1B76] hover:bg-[#FDF2F7] transition-colors relative"
+            className="p-2 rounded-full text-neutral-600 dark:text-neutral-300 hover:text-[#DE1B76] hover:bg-[#FDF2F7] dark:hover:bg-neutral-800 transition-colors relative"
           >
             <ShoppingBag className="w-4 h-4" />
             {cartCount > 0 && (
@@ -225,7 +234,7 @@ export const Header: React.FC<HeaderProps> = ({
             id="mobile-menu-btn"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label={mobileMenuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
-            className="xl:hidden p-2 rounded-lg text-neutral-800 hover:text-[#DE1B76] hover:bg-neutral-50 transition-colors"
+            className="xl:hidden p-2 rounded-lg text-neutral-800 dark:text-neutral-200 hover:text-[#DE1B76] hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -237,7 +246,7 @@ export const Header: React.FC<HeaderProps> = ({
       {mobileMenuOpen && (
         <div
           id="mobile-nav-drawer"
-          className="xl:hidden border-t border-neutral-100 bg-white px-6 pt-4 pb-6 mt-3 shadow-xl animate-in slide-in-from-top-2 duration-200"
+          className="xl:hidden border-t border-neutral-100 dark:border-neutral-800 bg-white dark:bg-[#121214] px-6 pt-4 pb-6 mt-3 shadow-xl animate-in slide-in-from-top-2 duration-200"
         >
           <div className="flex flex-col space-y-1 mb-5">
             {navLinks.map((item) => {
@@ -252,8 +261,8 @@ export const Header: React.FC<HeaderProps> = ({
                   }}
                   className={`text-left text-sm font-semibold py-2.5 px-3 rounded-xl flex items-center justify-between transition-colors ${
                     isActive
-                      ? 'bg-[#FDF2F7] text-[#DE1B76]'
-                      : 'text-neutral-800 hover:bg-neutral-50'
+                      ? 'bg-[#FDF2F7] dark:bg-neutral-800 text-[#DE1B76]'
+                      : 'text-neutral-800 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-800'
                   }`}
                 >
                   <span>{item.label}</span>
@@ -263,7 +272,8 @@ export const Header: React.FC<HeaderProps> = ({
             })}
           </div>
 
-          <div className="pt-3 border-t border-neutral-100 space-y-2.5">
+
+          <div className="pt-3 border-t border-neutral-100 dark:border-neutral-800 space-y-2.5">
             {currentUser ? (
               <div className="grid grid-cols-2 gap-2 mb-2">
                 <button

@@ -44,6 +44,7 @@ export default function App() {
   const [isCustomOrderOpen, setIsCustomOrderOpen] = useState(false);
   const [customOrderPrefill, setCustomOrderPrefill] = useState('');
 
+
   // Gracefully migrate legacy hash-based URLs (e.g. /#/shop -> /shop)
   useEffect(() => {
     if (window.location.hash && window.location.hash.startsWith('#/')) {
@@ -81,7 +82,7 @@ export default function App() {
 
   return (
     <AuthProvider>
-      <div className="min-h-screen flex flex-col bg-white text-neutral-900 selection:bg-[#FDF2F7] selection:text-[#DE1B76]">
+      <div className="min-h-screen flex flex-col bg-white text-neutral-900 dark:bg-[#121214] dark:text-neutral-100 selection:bg-[#FDF2F7] selection:text-[#DE1B76]">
         <ScrollToTop />
 
         {/* Global Header */}
@@ -90,6 +91,7 @@ export default function App() {
           onNavigate={handleNavigate}
           wishlistCount={0}
           cartCount={0}
+
         />
 
         {/* Main Routed View Area */}

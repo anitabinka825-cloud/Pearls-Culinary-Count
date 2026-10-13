@@ -2,6 +2,7 @@ import React from 'react';
 import { MessageCircle, Phone, MapPin, Sparkles, Clock } from 'lucide-react';
 import { BUSINESS_CONFIG, createWhatsAppUrl } from '../../config/business';
 import { Button } from '../ui/Button';
+import brandFlyerImg from '../../assets/images/brand_flyer_1791881765075.jpg';
 
 interface CTASectionProps {
   onOpenCustomOrder?: () => void;
@@ -110,6 +111,24 @@ export const CTASection: React.FC<CTASectionProps> = ({ onOpenCustomOrder }) => 
                 <p className="text-xs text-neutral-400 mt-0.5">
                   Book 48 to 72 hours ahead
                 </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Brand Flyer Showcase under the contact buttons and info grid */}
+          <div className="pt-12 max-w-xl mx-auto">
+            <div className="relative rounded-3xl overflow-hidden border-2 border-[#C5A059]/40 shadow-2xl bg-neutral-900 group">
+              <img
+                src={brandFlyerImg}
+                alt="Pearls Culinary Counts Brand Flyer & Offerings"
+                className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
+              <div className="absolute bottom-4 left-4 right-4 text-center">
+                <span className="inline-block px-3.5 py-1.5 rounded-full bg-[#DE1B76]/95 text-white text-xs font-semibold tracking-wider uppercase backdrop-blur-xs shadow-lg">
+                  Exclusive Brand Showcase
+                </span>
               </div>
             </div>
           </div>

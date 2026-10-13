@@ -3,6 +3,7 @@ import { MessageCircle, Phone, MapPin, Heart, Sparkles, X } from 'lucide-react';
 import { BUSINESS_CONFIG, createWhatsAppUrl } from '../../config/business';
 import { SocialLinks } from '../ui/SocialLinks';
 import { AppRoute } from '../../types';
+import siteLogoImg from '../../assets/images/pearls_logo_1791881783293.jpg';
 
 interface FooterProps {
   onNavigate: (route: AppRoute) => void;
@@ -28,8 +29,14 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           
           {/* Brand Info (4 cols) */}
           <div className="lg:col-span-4 space-y-4">
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#DE1B76]"></span>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-[#C5A059] shadow-md flex-shrink-0">
+                <img
+                  src={siteLogoImg}
+                  alt="Pearls Culinary Counts Logo"
+                  className="w-full h-full object-cover"
+                />
+              </div>
               <span className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-white">
                 PEARLS CULINARY <span className="text-[#DE1B76]">COUNTS</span>
               </span>

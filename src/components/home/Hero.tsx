@@ -123,10 +123,11 @@ export const Hero: React.FC<HeroProps> = ({
               {/* Main Image Frame */}
               <div className="relative rounded-2xl overflow-hidden shadow-xl bg-neutral-100 aspect-4/5">
                 <img
-                  src="https://images.unsplash.com/photo-1535141192574-5d4897c13136?q=80&w=1200&auto=format&fit=crop"
+                  src="/src/assets/images/hero_culinary_cake_1791882607589.jpg"
                   alt="Pearls Culinary Counts - Handcrafted celebration cake and gourmet confectionery"
                   className="w-full h-full object-cover object-center transform hover:scale-105 transition-transform duration-700 ease-out"
                   loading="eager"
+                  referrerPolicy="no-referrer"
                 />
 
                 {/* Subtle vignette overlay */}
