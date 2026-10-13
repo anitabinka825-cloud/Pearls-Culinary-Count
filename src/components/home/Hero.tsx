@@ -2,6 +2,7 @@ import React from 'react';
 import { Sparkles, ArrowRight, MessageCircle, MapPin, Heart } from 'lucide-react';
 import { BUSINESS_CONFIG, createWhatsAppUrl } from '../../config/business';
 import { Button } from '../ui/Button';
+import heroImg from '../../assets/images/hero_culinary_cake_1791882607589.jpg';
 
 interface HeroProps {
   onExploreProducts: () => void;
@@ -123,7 +124,7 @@ export const Hero: React.FC<HeroProps> = ({
               {/* Main Image Frame */}
               <div className="relative rounded-2xl overflow-hidden shadow-xl bg-neutral-100 aspect-4/5">
                 <img
-                  src="/src/assets/images/hero_culinary_cake_1791882607589.jpg"
+                  src={heroImg}
                   alt="Pearls Culinary Counts - Handcrafted celebration cake and gourmet confectionery"
                   className="w-full h-full object-cover object-center transform hover:scale-105 transition-transform duration-700 ease-out"
                   loading="eager"
