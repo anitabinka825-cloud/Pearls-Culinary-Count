@@ -1,29 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import React, { lazy, Suspense, useState, useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { useCart } from './context/CartContext';
+import { useSiteSettings } from './context/SiteSettingsContext';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
 import { CustomerCareButton } from './components/layout/CustomerCareButton';
 import { HomeView } from './components/views/HomeView';
-import { ShopView } from './components/views/ShopView';
-import { CakesView } from './components/views/CakesView';
-import { PastriesView } from './components/views/PastriesView';
-import { FoodView } from './components/views/FoodView';
-import { TrainingView } from './components/views/TrainingView';
-import { AboutView } from './components/views/AboutView';
-import { ContactView } from './components/views/ContactView';
-import { EnquiryView } from './components/views/EnquiryView';
-import { ProductDetailView } from './components/views/ProductDetailView';
-import { LoginView } from './components/views/LoginView';
-import { RegisterView } from './components/views/RegisterView';
-import { ForgotPasswordView } from './components/views/ForgotPasswordView';
-import { AccountView } from './components/views/AccountView';
-import { NotFoundView } from './components/views/NotFoundView';
-import { StagePlaceholderView } from './components/views/StagePlaceholderView';
-import { ProductDetailModal } from './components/products/ProductDetailModal';
-import { CustomOrderModal } from './components/home/CustomOrderModal';
+import { LoadingState } from './components/ui/LoadingState';
 import { AppRoute, CategoryItem, Product } from './types';
+
+// Route-level code splitting: each page is its own chunk, fetched on first visit.
+// HomeView stays eager because it is the landing page for most visitors.
+const CartView = lazy(() => import('./components/cart/CartView').then((m) => ({ default: m.CartView })));
+const CheckoutView = lazy(() => import('./components/cart/CheckoutView').then((m) => ({ default: m.CheckoutView })));
+const OrderView = lazy(() => import('./components/cart/OrderView').then((m) => ({ default: m.OrderView })));
+const ShopView = lazy(() => import('./components/views/ShopView').then((m) => ({ default: m.ShopView })));
+const CakesView = lazy(() => import('./components/views/CakesView').then((m) => ({ default: m.CakesView })));
+const PastriesView = lazy(() => import('./components/views/PastriesView').then((m) => ({ default: m.PastriesView })));
+const FoodView = lazy(() => import('./components/views/FoodView').then((m) => ({ default: m.FoodView })));
+const TrainingView = lazy(() => import('./components/views/TrainingView').then((m) => ({ default: m.TrainingView })));
+const AboutView = lazy(() => import('./components/views/AboutView').then((m) => ({ default: m.AboutView })));
+const ContactView = lazy(() => import('./components/views/ContactView').then((m) => ({ default: m.ContactView })));
+const EnquiryView = lazy(() => import('./components/views/EnquiryView').then((m) => ({ default: m.EnquiryView })));
+const ProductDetailView = lazy(() => import('./components/views/ProductDetailView').then((m) => ({ default: m.ProductDetailView })));
+const LoginView = lazy(() => import('./components/views/LoginView').then((m) => ({ default: m.LoginView })));
+const RegisterView = lazy(() => import('./components/views/RegisterView').then((m) => ({ default: m.RegisterView })));
+const ForgotPasswordView = lazy(() => import('./components/views/ForgotPasswordView').then((m) => ({ default: m.ForgotPasswordView })));
+const AccountView = lazy(() => import('./components/views/AccountView').then((m) => ({ default: m.AccountView })));
+const AdminView = lazy(() => import('./components/views/AdminView').then((m) => ({ default: m.AdminView })));
+const NotFoundView = lazy(() => import('./components/views/NotFoundView').then((m) => ({ default: m.NotFoundView })));
+const ProductDetailModal = lazy(() => import('./components/products/ProductDetailModal').then((m) => ({ default: m.ProductDetailModal })));
+const CustomOrderModal = lazy(() => import('./components/home/CustomOrderModal').then((m) => ({ default: m.CustomOrderModal })));
 
 // Scroll to top helper on route changes
 function ScrollToTop() {
@@ -39,6 +48,9 @@ function ScrollToTop() {
 export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { count: cartCount } = useCart();
+  // Reading the settings here re-renders the whole tree when the owner's details load or change.
+  const { settings: siteSettings } = useSiteSettings();
 
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isCustomOrderOpen, setIsCustomOrderOpen] = useState(false);
@@ -107,17 +119,24 @@ export default function App() {
       <div className="min-h-screen flex flex-col bg-white text-neutral-900 dark:bg-[#121214] dark:text-neutral-100 selection:bg-[#FDF2F7] selection:text-[#DE1B76]">
         <ScrollToTop />
 
+        {siteSettings?.announcement && (
+          <div role="status" className="bg-[#121214] text-white text-xs sm:text-sm text-center px-4 py-2">
+            {siteSettings.announcement}
+          </div>
+        )}
+
         {/* Global Header */}
         <Header
           currentRoute={currentRoute}
           onNavigate={handleNavigate}
           wishlistCount={0}
-          cartCount={0}
+          cartCount={cartCount}
 
         />
 
         {/* Main Routed View Area */}
         <main id="main-content" className="flex-1">
+          <Suspense fallback={<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><LoadingState message="Loading..." /></div>}>
           <Routes>
             <Route
               path="/"
@@ -210,46 +229,56 @@ export default function App() {
               }
             />
             <Route
-              path="/cart"
+              path="/admin"
               element={
-                <StagePlaceholderView
-                  type="cart"
-                  onNavigateHome={() => navigate('/')}
-                  onNavigateShop={() => navigate('/shop')}
-                />
+                <ProtectedRoute>
+                  <AdminView />
+                </ProtectedRoute>
               }
             />
+            <Route path="/cart" element={<CartView />} />
             <Route
               path="/checkout"
               element={
-                <StagePlaceholderView
-                  type="checkout"
-                  onNavigateHome={() => navigate('/')}
-                  onNavigateShop={() => navigate('/shop')}
-                />
+                <ProtectedRoute>
+                  <CheckoutView />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/order/:reference"
+              element={
+                <ProtectedRoute>
+                  <OrderView />
+                </ProtectedRoute>
               }
             />
             {/* Catch-all 404 Route */}
             <Route path="*" element={<NotFoundView />} />
           </Routes>
+          </Suspense>
         </main>
 
         {/* Global Footer */}
         <Footer onNavigate={handleNavigate} />
 
-        {/* Reusable Product Quick View Modal */}
-        <ProductDetailModal
-          product={selectedProduct}
-          onClose={() => setSelectedProduct(null)}
-          onOpenCustomOrder={(productName) => handleOpenCustomOrder(productName)}
-        />
-
-        {/* Reusable Bespoke Order / Enquiry Modal */}
-        <CustomOrderModal
-          isOpen={isCustomOrderOpen}
-          onClose={() => setIsCustomOrderOpen(false)}
-          prefillProduct={customOrderPrefill}
-        />
+        {/* Modals are lazy-loaded and only mounted while open. */}
+        <Suspense fallback={null}>
+          {selectedProduct && (
+            <ProductDetailModal
+              product={selectedProduct}
+              onClose={() => setSelectedProduct(null)}
+              onOpenCustomOrder={(productName) => handleOpenCustomOrder(productName)}
+            />
+          )}
+          {isCustomOrderOpen && (
+            <CustomOrderModal
+              isOpen={isCustomOrderOpen}
+              onClose={() => setIsCustomOrderOpen(false)}
+              prefillProduct={customOrderPrefill}
+            />
+          )}
+        </Suspense>
 
         {/* Customer Care "Need Help?" floating entry point */}
         <CustomerCareButton

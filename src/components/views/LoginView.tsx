@@ -11,9 +11,10 @@ export function LoginView() {
 
   React.useEffect(() => {
     if (currentUser) {
-      navigate('/account', { replace: true });
+      // Return to where the visitor was heading (e.g. checkout), not always the account page.
+      navigate((location.state as any)?.from?.pathname || '/account', { replace: true });
     }
-  }, [currentUser, navigate]);
+  }, [currentUser, navigate, location.state]);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

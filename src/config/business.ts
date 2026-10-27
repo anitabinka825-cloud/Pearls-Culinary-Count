@@ -1,4 +1,4 @@
-import { BusinessConfig } from '../types';
+import { BusinessConfig, PublicSiteSettings } from '../types';
 
 export const BUSINESS_CONFIG: BusinessConfig = {
   name: 'Pearls Culinary Counts',
@@ -30,6 +30,36 @@ export const BUSINESS_CONFIG: BusinessConfig = {
     orderTrackingReady: false,
   },
 };
+
+const BUILT_IN: BusinessConfig = JSON.parse(JSON.stringify(BUSINESS_CONFIG));
+
+const toLocalPhone = (e164: string) => '0' + e164.replace(/\D/g, '').slice(-9);
+const prettyPhone = (local: string) => `${local.slice(0, 3)} ${local.slice(3, 6)} ${local.slice(6)}`;
+
+/**
+ * Applies the owner's dashboard settings on top of the built-in details. Many components read
+ * BUSINESS_CONFIG directly, so it is updated in place (and the app re-renders from SiteSettingsContext).
+ * Always starts from the built-in values, so clearing a field in the dashboard restores the default.
+ */
+export function applySiteSettings(s: PublicSiteSettings): void {
+  const b = BUSINESS_CONFIG;
+  b.phone = s.phone ? toLocalPhone(s.phone) : BUILT_IN.phone;
+  b.phoneFormatted = s.phone ? prettyPhone(b.phone) : BUILT_IN.phoneFormatted;
+  // WhatsApp follows its own number, else the phone number, else the built-in one.
+  const wa = (s.whatsapp || s.phone).replace(/\D/g, '');
+  b.whatsappNumber = wa ? `+${wa}` : BUILT_IN.whatsappNumber;
+  b.whatsappLink = wa ? `https://wa.me/${wa}` : BUILT_IN.whatsappLink;
+  b.email = s.email || BUILT_IN.email;
+  b.socials = {
+    ...BUILT_IN.socials,
+    whatsapp: b.whatsappLink,
+    instagram: s.socials.instagram || BUILT_IN.socials.instagram,
+    facebook: s.socials.facebook || BUILT_IN.socials.facebook,
+    tiktok: s.socials.tiktok || BUILT_IN.socials.tiktok,
+    youtube: s.socials.youtube || BUILT_IN.socials.youtube,
+    x: s.socials.x || BUILT_IN.socials.x,
+  };
+}
 
 export const createWhatsAppUrl = (customText?: string): string => {
   const defaultMessage = `Hello ${BUSINESS_CONFIG.name}, I would like to make an enquiry or place an order.`;

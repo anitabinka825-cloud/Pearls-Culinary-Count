@@ -1,4 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { useCart } from '../../context/CartContext';
+import { resolvePurchase, formatPesewas } from '../../lib/purchasable';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
   MessageCircle,
@@ -36,6 +38,9 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [showCartNotice, setShowCartNotice] = useState(false);
+  const [cartError, setCartError] = useState('');
+  const [qty, setQty] = useState(1);
+  const { addItem } = useCart();
   const [imgError, setImgError] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
 
@@ -65,6 +70,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
   // Synchronize when product changes
   useEffect(() => {
     setSelectedOptions(initialOptions);
+    setQty(1);
     setSelectedImageIndex(0);
     setImgError(false);
   }, [initialOptions]);
@@ -213,9 +219,14 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
 
   const whatsappInquiryUrl = createWhatsAppUrl(whatsappMessage);
 
+  // Plain call (not a hook): this code sits after the early "product not found" return.
+  const purchase = resolvePurchase(product, activeVariant?.id ?? null);
+
   const handleAddToCart = () => {
+    const error = addItem(product, activeVariant?.id ?? null, qty);
+    setCartError(error || '');
     setShowCartNotice(true);
-    setTimeout(() => setShowCartNotice(false), 3500);
+    setTimeout(() => setShowCartNotice(false), 4000);
   };
 
   const handleShare = () => {
@@ -606,29 +617,51 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                 </button>
               )}
 
-              {/* Future Add to Cart Action */}
-              <button
-                type="button"
-                onClick={handleAddToCart}
-                className="w-full inline-flex items-center justify-center gap-2 bg-white border border-neutral-200 text-neutral-700 hover:text-neutral-900 hover:border-neutral-300 font-medium py-2.5 px-6 rounded-full text-xs transition-colors"
-                title="Add to Cart — Coming Soon"
-                aria-label="Add to Cart — Coming Soon"
-              >
-                <ShoppingBag className="w-3.5 h-3.5 text-neutral-500" />
-                <span>Add to Cart — Coming Soon</span>
-              </button>
-
-              {/* Cart Preview Notice Toast */}
-              {showCartNotice && (
-                <div className="p-3.5 rounded-2xl bg-[#121214] text-white text-xs space-y-1 shadow-lg animate-in fade-in duration-200">
-                  <div className="flex items-center gap-2 font-semibold text-[#C5A059]">
-                    <Sparkles className="w-4 h-4" />
-                    <span>Commerce Features Coming Soon</span>
+              {/* Add to Cart (only for items that can be bought online) */}
+              {purchase.ok ? (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3">
+                    <div className="inline-flex items-center rounded-full border border-neutral-200 bg-white">
+                      <button
+                        type="button"
+                        aria-label="Decrease quantity"
+                        onClick={() => setQty((q) => Math.max(purchase.minQty, q - 1))}
+                        className="w-9 h-9 text-lg text-neutral-600 hover:text-[#DE1B76]"
+                      >
+                        −
+                      </button>
+                      <span className="w-8 text-center text-sm font-semibold" aria-live="polite">{qty}</span>
+                      <button
+                        type="button"
+                        aria-label="Increase quantity"
+                        onClick={() => setQty((q) => Math.min(purchase.maxQty, q + 1))}
+                        className="w-9 h-9 text-lg text-neutral-600 hover:text-[#DE1B76]"
+                      >
+                        +
+                      </button>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleAddToCart}
+                      className="flex-1 inline-flex items-center justify-center gap-2 bg-[#121214] hover:bg-black text-white font-semibold py-2.5 px-6 rounded-full text-xs transition-colors"
+                    >
+                      <ShoppingBag className="w-3.5 h-3.5 text-[#C5A059]" />
+                      <span>Add to Cart · {formatPesewas(purchase.unitPricePesewas * qty)}</span>
+                    </button>
                   </div>
-                  <p className="text-neutral-300 leading-relaxed text-[11px]">
-                    Shopping cart, checkout, online payments, and full order processing will be introduced in a future commerce stage. For immediate ordering, please use the WhatsApp enquiry button above!
-                  </p>
+                  {showCartNotice && (
+                    <div role="status" className="p-3 rounded-2xl bg-[#121214] text-white text-xs flex items-center justify-between gap-3">
+                      <span>{cartError || 'Added to your cart.'}</span>
+                      {!cartError && (
+                        <Link to="/cart" className="font-semibold text-[#C5A059] hover:underline">View cart</Link>
+                      )}
+                    </div>
+                  )}
                 </div>
+              ) : (
+                <p className="text-[11px] text-neutral-500 text-center">
+                  {purchase.reason}. Use the enquiry options above to order.
+                </p>
               )}
             </div>
 

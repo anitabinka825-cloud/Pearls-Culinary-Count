@@ -17,6 +17,7 @@ export function RegisterView() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
@@ -35,6 +36,10 @@ export function RegisterView() {
       setFormError('Please enter your email address.');
       return;
     }
+    if (!/^(?:\+?233|0)?\d{9}$/.test(phone.replace(/[\s\-()]/g, ''))) {
+      setFormError('Please enter a valid Ghana phone number, e.g. 055 123 4567.');
+      return;
+    }
     if (password.length < 6) {
       setFormError('Password must be at least 6 characters long.');
       return;
@@ -46,7 +51,7 @@ export function RegisterView() {
 
     try {
       setSubmitting(true);
-      await signUp(email.trim(), password, firstName.trim(), lastName.trim());
+      await signUp(email.trim(), password, firstName.trim(), lastName.trim(), phone.trim());
       navigate('/account', { replace: true });
     } catch (err: any) {
       // Error is set in AuthContext
@@ -155,7 +160,22 @@ export function RegisterView() {
             </div>
           </div>
 
-
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-700 mb-1.5">
+              Phone Number *
+            </label>
+            <input
+              type="tel"
+              required
+              inputMode="tel"
+              autoComplete="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="055 123 4567"
+              className="w-full px-3 py-2.5 rounded-xl border border-neutral-300 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-[#DE1B76] focus:border-transparent text-sm"
+            />
+            <p className="mt-1 text-[11px] text-neutral-500">Used for order updates by SMS and delivery coordination.</p>
+          </div>
 
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-700 mb-1.5">

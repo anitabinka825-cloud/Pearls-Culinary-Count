@@ -103,9 +103,22 @@ export type AppRoute =
   | '/contact'
   | '/enquiry'
   | '/account'
+  | '/admin'
   | '/login'
   | '/register'
   | '/forgot-password'
   | '/cart'
   | '/checkout'
   | `/product/${string}`;
+
+/** What the owner can change from the dashboard; empty strings mean "use the built-in value". */
+export interface PublicSiteSettings {
+  phone: string; // +233XXXXXXXXX
+  whatsapp: string;
+  email: string;
+  socials: { instagram: string; facebook: string; tiktok: string; youtube: string; x: string };
+  careHours: string;
+  announcement: string;
+  ordersPaused: boolean;
+  pauseMessage: string;
+}

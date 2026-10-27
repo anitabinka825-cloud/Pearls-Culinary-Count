@@ -14,6 +14,8 @@ import {
 import { Product, ProductAvailability } from '../../types';
 import { productRepository } from '../../services/productRepository';
 import { createWhatsAppUrl } from '../../config/business';
+import { useCart } from '../../context/CartContext';
+import { resolvePurchase } from '../../lib/purchasable';
 
 interface ProductCardProps {
   product: Product;
@@ -29,6 +31,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const navigate = useNavigate();
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [showCartNotice, setShowCartNotice] = useState(false);
+  const [cartMessage, setCartMessage] = useState('');
+  const { addItem } = useCart();
+  const hasVariants = product.pricingType === 'VARIANT_PRICING';
+  // Variant products need an option chosen first (on the product page); simple ones add directly.
+  const purchasable = hasVariants
+    ? product.variants?.some((v) => resolvePurchase(product, v.id).ok)
+    : resolvePurchase(product).ok;
   const [imgError, setImgError] = useState(false);
 
   // Status mapping for Stage 2A availability states (plus backward compatibility)
@@ -83,11 +92,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
   const handleCartClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (hasVariants) {
+      navigate(productPath);
+      return;
+    }
+    const error = addItem(product);
+    setCartMessage(error || 'Added to your cart');
     setShowCartNotice(true);
     setTimeout(() => setShowCartNotice(false), 2600);
-    if (onAddToCartPlaceholder) {
-      onAddToCartPlaceholder(product);
-    }
+    if (!error && onAddToCartPlaceholder) onAddToCartPlaceholder(product);
   };
 
   const handleWishlistToggle = (e: React.MouseEvent) => {
@@ -188,7 +201,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         {showCartNotice && (
           <div className="absolute bottom-2 left-2 right-2 bg-[#121214] text-white text-[11px] py-1.5 px-3 rounded-lg text-center shadow-lg animate-in fade-in z-20 flex items-center justify-center gap-1.5">
             <Sparkles className="w-3 h-3 text-[#C5A059]" />
-            <span>Cart ordering is coming in a future commerce stage. Tap Enquire to order on WhatsApp.</span>
+            <span>{cartMessage}</span>
           </div>
         )}
       </div>
@@ -251,16 +264,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               <span>Enquire on WhatsApp</span>
             </a>
 
-            <button
-              type="button"
-              onClick={handleCartClick}
-              title="Add to Cart — Coming Soon"
-              aria-label="Add to Cart — Coming Soon"
-              className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-xs font-medium transition-colors"
-            >
-              <ShoppingBag className="w-3.5 h-3.5 text-neutral-500" />
-              <span>Add to Cart — Coming Soon</span>
-            </button>
+            {purchasable && (
+              <button
+                type="button"
+                onClick={handleCartClick}
+                className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-800 text-xs font-semibold transition-colors"
+              >
+                <ShoppingBag className="w-3.5 h-3.5 text-[#DE1B76]" />
+                <span>{hasVariants ? 'Choose Options' : 'Add to Cart'}</span>
+              </button>
+            )}
           </div>
 
           {/* View Details Text Link */}

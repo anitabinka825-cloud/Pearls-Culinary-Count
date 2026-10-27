@@ -2,7 +2,7 @@ import React from 'react';
 import { MessageCircle, Phone, MapPin, Sparkles, Clock } from 'lucide-react';
 import { BUSINESS_CONFIG, createWhatsAppUrl } from '../../config/business';
 import { Button } from '../ui/Button';
-import brandFlyerImg from '../../assets/images/brand_flyer_1791881765075.jpg';
+import brandFlyerImg from '../../assets/images/brand_flyer.webp';
 
 interface CTASectionProps {
   onOpenCustomOrder?: () => void;
@@ -123,6 +123,8 @@ export const CTASection: React.FC<CTASectionProps> = ({ onOpenCustomOrder }) => 
                 alt="Pearls Culinary Counts Brand Flyer & Offerings"
                 className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
                 loading="lazy"
+                width={896}
+                height={1200}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
               <div className="absolute bottom-4 left-4 right-4 text-center">

@@ -12,12 +12,15 @@ import {
 } from 'firebase/auth';
 import { auth, googleProvider, isFirebaseConfigured } from '../services/firebase';
 import { UserProfile } from '../types';
+import { apiFetch } from '../services/api';
 
 interface AuthContextType {
   currentUser: User | null;
   userProfile: UserProfile | null;
   loading: boolean;
-  signUp: (email: string, password: string, firstName: string, lastName: string) => Promise<void>;
+  signUp: (email: string, password: string, firstName: string, lastName: string, phone: string) => Promise<void>;
+  isAdmin: boolean;
+  updateProfileDetails: (firstName: string, lastName: string, phone: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
@@ -87,6 +90,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     setUserProfile(profile);
+
+    // Merge the server-side profile (phone number, role) when the API is reachable.
+    apiFetch<{ firstName: string; lastName: string; phone: string; role: 'customer' | 'admin' }>('/me')
+      .then((me) =>
+        setUserProfile((prev) =>
+          prev && prev.uid === user.uid
+            ? { ...prev, firstName: me.firstName || prev.firstName, lastName: me.lastName || prev.lastName, phone: me.phone, role: me.role }
+            : prev,
+        ),
+      )
+      .catch(() => undefined);
   };
 
   useEffect(() => {
@@ -116,7 +130,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const signUp = async (email: string, password: string, firstName: string, lastName: string) => {
+  const signUp = async (email: string, password: string, firstName: string, lastName: string, phone: string) => {
     try {
       clearError();
       checkConfig();
@@ -128,6 +142,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       await firebaseSendEmailVerification(user);
 
+      // Persist phone + names in our database (non-blocking for the sign-up itself).
+      try {
+        await apiFetch('/me', {
+          method: 'PUT',
+          body: JSON.stringify({ firstName: firstName.trim(), lastName: lastName.trim(), phone }),
+        });
+      } catch (e) {
+        console.warn('Could not save profile details yet:', e);
+      }
       syncProfile(user);
     } catch (err: any) {
       const friendly = err.message.includes('Firebase is not configured')
@@ -213,6 +236,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const updateProfileDetails = async (firstName: string, lastName: string, phone: string) => {
+    const me = await apiFetch<{ firstName: string; lastName: string; phone: string }>('/me', {
+      method: 'PUT',
+      body: JSON.stringify({ firstName, lastName, phone }),
+    });
+    if (auth?.currentUser) await updateProfile(auth.currentUser, { displayName: `${firstName} ${lastName}`.trim() });
+    setUserProfile((prev) => (prev ? { ...prev, firstName: me.firstName, lastName: me.lastName, phone: me.phone } : prev));
+  };
+
   const reloadUser = async () => {
     if (!auth || !auth.currentUser) return;
     try {
@@ -231,6 +263,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         userProfile,
         loading,
         signUp,
+        isAdmin: userProfile?.role === 'admin',
+        updateProfileDetails,
         signIn,
         signInWithGoogle,
         signOut,

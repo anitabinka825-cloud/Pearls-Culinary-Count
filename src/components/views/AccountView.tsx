@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { MyEnquiries } from '../account/MyEnquiries';
+import { MyOrders } from '../account/MyOrders';
+import { ProfileEditor } from '../account/ProfileEditor';
 import {
   User,
   Mail,
@@ -19,6 +23,7 @@ import {
 } from 'lucide-react';
 
 export function AccountView() {
+  const navigate = useNavigate();
   const { currentUser, userProfile, signOut, sendEmailVerification, reloadUser } = useAuth();
   const [activeTab, setActiveTab] = useState<'profile' | 'addresses' | 'orders' | 'enquiries' | 'wishlist' | 'settings'>('profile');
   const [verificationSent, setVerificationSent] = useState(false);
@@ -283,6 +288,8 @@ export function AccountView() {
                   </div>
                 </div>
 
+                <ProfileEditor />
+
                 <div className="pt-6 border-t border-neutral-100 flex items-center justify-between text-xs text-neutral-500">
                   <span>Account UID: {currentUser?.uid}</span>
                   <span>Member since: {userProfile?.createdAt ? new Date(userProfile.createdAt).toLocaleDateString() : 'Recent'}</span>
@@ -307,39 +314,9 @@ export function AccountView() {
               </div>
             )}
 
-            {activeTab === 'orders' && (
-              <div className="bg-white rounded-2xl shadow-xs border border-neutral-200/80 p-8 text-center space-y-4">
-                <div className="w-16 h-16 bg-[#FDF2F7] text-[#DE1B76] rounded-full flex items-center justify-center mx-auto">
-                  <ShoppingBag className="w-8 h-8" />
-                </div>
-                <h3 className="text-lg font-bold text-neutral-900">Orders & History</h3>
-                <p className="text-sm text-neutral-600 max-w-md mx-auto leading-relaxed">
-                  Order history and tracking will be available in a later stage. You can currently explore our complete catalogue and place bespoke orders instantly via WhatsApp.
-                </p>
-                <div className="pt-2">
-                  <span className="inline-block px-3 py-1 bg-neutral-100 text-neutral-600 text-xs font-semibold rounded-full">
-                    Coming in a later stage
-                  </span>
-                </div>
-              </div>
-            )}
+            {activeTab === 'orders' && <MyOrders />}
 
-            {activeTab === 'enquiries' && (
-              <div className="bg-white rounded-2xl shadow-xs border border-neutral-200/80 p-8 text-center space-y-4">
-                <div className="w-16 h-16 bg-[#FDF2F7] text-[#DE1B76] rounded-full flex items-center justify-center mx-auto">
-                  <MessageSquare className="w-8 h-8" />
-                </div>
-                <h3 className="text-lg font-bold text-neutral-900">Bespoke Enquiries</h3>
-                <p className="text-sm text-neutral-600 max-w-md mx-auto leading-relaxed">
-                  Enquiry tracking will be available in a later stage. Your celebration cake and event catering custom requests are handled directly by our master chefs via WhatsApp.
-                </p>
-                <div className="pt-2">
-                  <span className="inline-block px-3 py-1 bg-neutral-100 text-neutral-600 text-xs font-semibold rounded-full">
-                    Coming in a later stage
-                  </span>
-                </div>
-              </div>
-            )}
+            {activeTab === 'enquiries' && <MyEnquiries onNew={() => navigate('/enquiry')} />}
 
             {activeTab === 'wishlist' && (
               <div className="bg-white rounded-2xl shadow-xs border border-neutral-200/80 p-8 text-center space-y-4">

@@ -2,7 +2,7 @@ import React from 'react';
 import { Sparkles, ArrowRight, MessageCircle, MapPin, Heart } from 'lucide-react';
 import { BUSINESS_CONFIG, createWhatsAppUrl } from '../../config/business';
 import { Button } from '../ui/Button';
-import heroImg from '../../assets/images/hero_culinary_cake_1791882607589.jpg';
+import heroImg from '../../assets/images/hero_culinary_cake.webp';
 
 interface HeroProps {
   onExploreProducts: () => void;
@@ -128,6 +128,9 @@ export const Hero: React.FC<HeroProps> = ({
                   alt="Pearls Culinary Counts - Handcrafted celebration cake and gourmet confectionery"
                   className="w-full h-full object-cover object-center transform hover:scale-105 transition-transform duration-700 ease-out"
                   loading="eager"
+                  fetchPriority="high"
+                  width={1376}
+                  height={768}
                   referrerPolicy="no-referrer"
                 />
 

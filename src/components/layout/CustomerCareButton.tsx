@@ -14,6 +14,7 @@ import {
   Send,
 } from 'lucide-react';
 import { BUSINESS_CONFIG, createWhatsAppUrl } from '../../config/business';
+import { useSiteSettings } from '../../context/SiteSettingsContext';
 
 interface CustomerCareButtonProps {
   onOpenCustomOrder?: () => void;
@@ -24,6 +25,7 @@ export const CustomerCareButton: React.FC<CustomerCareButtonProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+  const { settings } = useSiteSettings();
 
   useEffect(() => {
     if (!isOpen) return;
@@ -195,6 +197,9 @@ export const CustomerCareButton: React.FC<CustomerCareButtonProps> = ({
               <span className="text-[10px] uppercase tracking-wider font-semibold text-neutral-500 block">
                 Have a question? Chat with our team
               </span>
+              {settings?.careHours && (
+                <p className="text-[11px] text-neutral-500">Customer care hours: {settings.careHours}</p>
+              )}
               <a
                 href={whatsappGeneralUrl}
                 target="_blank"

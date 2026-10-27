@@ -12,7 +12,7 @@ import {
 import { BUSINESS_CONFIG, createWhatsAppUrl } from '../../config/business';
 import { AppRoute } from '../../types';
 import { useAuth } from '../../context/AuthContext';
-import siteLogoImg from '../../assets/images/pearls_logo_1791881783293.jpg';
+import siteLogoImg from '../../assets/images/pearls_logo.webp';
 
 interface HeaderProps {
   currentRoute: AppRoute;
@@ -29,7 +29,7 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { currentUser, userProfile, signOut } = useAuth();
+  const { currentUser, userProfile, signOut, isAdmin } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -113,6 +113,8 @@ export const Header: React.FC<HeaderProps> = ({
             <img
               src={siteLogoImg}
               alt="Pearls Culinary Counts Logo"
+              width={192}
+              height={192}
               className="w-full h-full object-cover"
             />
           </div>
@@ -161,6 +163,16 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Auth State (Desktop) */}
           {currentUser ? (
             <div className="hidden md:flex items-center gap-2">
+              {isAdmin && (
+                <button
+                  type="button"
+                  onClick={() => onNavigate('/admin')}
+                  title="Staff dashboard"
+                  className="px-3 py-1.5 rounded-full bg-[#121214] text-white text-xs font-semibold hover:bg-black transition-colors"
+                >
+                  Dashboard
+                </button>
+              )}
               <button
                 type="button"
                 onClick={() => onNavigate('/account')}
@@ -276,6 +288,18 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="pt-3 border-t border-neutral-100 dark:border-neutral-800 space-y-2.5">
             {currentUser ? (
               <div className="grid grid-cols-2 gap-2 mb-2">
+                {isAdmin && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onNavigate('/admin');
+                      setMobileMenuOpen(false);
+                    }}
+                    className="col-span-2 flex items-center justify-center p-2.5 rounded-xl bg-[#121214] text-xs font-semibold text-white"
+                  >
+                    Staff dashboard
+                  </button>
+                )}
                 <button
                   type="button"
                   onClick={() => {

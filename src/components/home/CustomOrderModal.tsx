@@ -16,6 +16,7 @@ import {
   createWhatsAppUrl,
 } from '../../config/business';
 import { CustomOrderEnquiry } from '../../types';
+import { submitEnquiry } from '../../services/api';
 
 interface CustomOrderModalProps {
   isOpen: boolean;
@@ -52,6 +53,9 @@ export const CustomOrderModal: React.FC<CustomOrderModalProps> = ({
   const [dateError, setDateError] = useState<string>('');
   const [submittedWhatsAppUrl, setSubmittedWhatsAppUrl] = useState<string>('');
   const [showWhatsAppRedirect, setShowWhatsAppRedirect] = useState<boolean>(false);
+  const [submitting, setSubmitting] = useState<boolean>(false);
+  const [submitError, setSubmitError] = useState<string>('');
+  const [savedReference, setSavedReference] = useState<string>('');
 
   // Sync prefillProduct when prop changes or modal opens
   useEffect(() => {
@@ -60,6 +64,8 @@ export const CustomOrderModal: React.FC<CustomOrderModalProps> = ({
         setFormData((prev) => ({ ...prev, productType: prefillProduct }));
       }
       setShowWhatsAppRedirect(false);
+      setSavedReference('');
+      setSubmitError('');
       setDateError('');
     }
   }, [isOpen, prefillProduct]);
@@ -98,7 +104,7 @@ export const CustomOrderModal: React.FC<CustomOrderModalProps> = ({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (formData.preferredDate && formData.preferredDate < today) {
@@ -130,13 +136,21 @@ export const CustomOrderModal: React.FC<CustomOrderModalProps> = ({
       .filter(Boolean)
       .join('\n');
 
-    const whatsappUrl = createWhatsAppUrl(lines);
+    setSubmitError('');
+    setSubmitting(true);
+    let reference = '';
+    try {
+      const saved = await submitEnquiry(formData);
+      reference = saved.reference;
+    } catch (err: any) {
+      // Never block the customer: the WhatsApp channel still works if saving fails.
+      setSubmitError(err?.message || 'We could not save your enquiry online.');
+    } finally {
+      setSubmitting(false);
+    }
+    setSavedReference(reference);
+    const whatsappUrl = createWhatsAppUrl(reference ? `${lines}\nReference: ${reference}` : lines);
     setSubmittedWhatsAppUrl(whatsappUrl);
-
-    // Open WhatsApp in a new tab
-    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
-
-    // Show transparent "Continue in WhatsApp" confirmation state
     setShowWhatsAppRedirect(true);
   };
 
@@ -200,7 +214,7 @@ export const CustomOrderModal: React.FC<CustomOrderModalProps> = ({
                   Continue in WhatsApp
                 </h3>
                 <p className="text-neutral-600 text-sm leading-relaxed">
-                  WhatsApp has opened in a new tab with your prefilled order specifications. Please tap <strong>Send</strong> in WhatsApp to submit your request to Pearls Culinary Counts.
+                  {savedReference ? <>Your enquiry has been saved (reference <strong>{savedReference}</strong>). </> : null}Tap the button below to open WhatsApp with your prefilled details, then press <strong>Send</strong> so our team can reply quickly.{submitError ? <span className="block mt-2 text-amber-700">Note: {submitError} Your WhatsApp message will still reach us.</span> : null}
                 </p>
               </div>
 
@@ -236,7 +250,7 @@ export const CustomOrderModal: React.FC<CustomOrderModalProps> = ({
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#DE1B76] hover:bg-[#B8125C] text-white text-xs font-semibold py-3 px-6 rounded-full transition-colors shadow-xs"
                 >
                   <ExternalLink className="w-4 h-4" />
-                  <span>Reopen WhatsApp Chat</span>
+                  <span>Open WhatsApp Chat</span>
                 </a>
                 <button
                   type="button"
@@ -581,10 +595,11 @@ export const CustomOrderModal: React.FC<CustomOrderModalProps> = ({
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full inline-flex items-center justify-center gap-2 bg-[#DE1B76] hover:bg-[#B8125C] text-white font-medium py-3.5 px-6 rounded-full text-sm shadow-xs transition-all duration-200 active:scale-[0.99]"
+                  disabled={submitting}
+                  className="w-full inline-flex items-center justify-center gap-2 bg-[#DE1B76] hover:bg-[#B8125C] disabled:opacity-60 disabled:cursor-not-allowed text-white font-medium py-3.5 px-6 rounded-full text-sm shadow-xs transition-all duration-200 active:scale-[0.99]"
                 >
                   <MessageCircle className="w-4 h-4 fill-white/20" />
-                  <span>Continue in WhatsApp</span>
+                  <span>{submitting ? 'Saving your enquiry…' : 'Submit Enquiry'}</span>
                 </button>
               </div>
             </form>
