@@ -1,13 +1,13 @@
 databases:
   - name: pearls-db
-    plan: basic-256mb
+    plan: free
     databaseName: pearls
 
 services:
   - type: web
     name: pearls-culinary-counts
     runtime: node
-    plan: starter # always on. Render's free web plan sleeps when idle, so the first customer would wait for a cold start
+    plan: free # always on. Render's free web plan sleeps when idle, so the first customer would wait for a cold start
     autoDeploy: true
     buildCommand: npm install --include=dev && npm run build
     startCommand: npm start
