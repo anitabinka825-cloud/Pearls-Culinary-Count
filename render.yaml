@@ -2,7 +2,7 @@ services:
   - type: web
     name: my-app
     runtime: node
-    plan: free
+    plan: free # free web services sleep when idle, so the first request after a pause is slow (cold start)
     autoDeploy: true
     # devDependencies (vite, tailwind) are needed to build the frontend.
     buildCommand: npm install --include=dev && npm run build
