@@ -1,7 +1,0 @@
-{
-  "name": "Pearls Culinary Counts",
-  "description": "Pearls Culinary Counts — beautifully made cakes, pastries, food, catering and culinary training in Accra, Ghana.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
-

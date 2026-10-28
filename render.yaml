@@ -1,53 +1,49 @@
-databases:
-  - name: pearls-db
-    plan: basic-256mb
-    databaseName: pearls
-
 services:
   - type: web
-    name: pearls-culinary-counts
+    name: my-app
     runtime: node
-    plan: starter # always on. Render's free web plan sleeps when idle, so the first customer would wait for a cold start
+    plan: free
     autoDeploy: true
+    # devDependencies (vite, tailwind) are needed to build the frontend.
     buildCommand: npm install --include=dev && npm run build
     startCommand: npm start
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
+      - key: NODE_VERSION
+        value: "20"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: AUTO_MIGRATE
+        value: "true"
       - key: CSP_MODE
-        value: report-only # change to enforce after the checklist in README Stage 10
-      - key: DATABASE_URL
-        fromDatabase: { name: pearls-db, property: connectionString }
-      - key: DATABASE_SSL
-        value: "false"
+        value: report-only
+      - key: APP_NAME
+        value: My App
+      - key: APP_URL          # e.g. https://my-app.onrender.com
+        sync: false
+      - key: DATABASE_URL     # Neon connection string
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: CLOUDINARY_FOLDER
+        value: my-app
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
       - key: PAYSTACK_SECRET_KEY
         sync: false
-      - key: PAYSTACK_CHANNELS
-        value: mobile_money,card
-      - key: SAILUP_API_KEY
+      - key: PAYSTACK_CURRENCY
+        value: GHS
+      - key: VITE_PAYSTACK_PUBLIC_KEY   # build-time, public
         sync: false
-      - key: SAILUP_SENDER_ID
-        sync: false
-      - key: SAILUP_WEBHOOK_SECRET
-        sync: false
-      - key: SMS_OWNER_PHONE
-        sync: false
-      - key: APP_URL
-        sync: false
-      - key: ADMIN_EMAILS
-        sync: false
-      - key: FIREBASE_SERVICE_ACCOUNT_JSON
-        sync: false
-      - key: VITE_FIREBASE_API_KEY
-        sync: false
-      - key: VITE_FIREBASE_AUTH_DOMAIN
-        sync: false
-      - key: VITE_FIREBASE_PROJECT_ID
-        sync: false
-      - key: VITE_FIREBASE_STORAGE_BUCKET
-        sync: false
-      - key: VITE_FIREBASE_MESSAGING_SENDER_ID
-        sync: false
-      - key: VITE_FIREBASE_APP_ID
-        sync: false
+      - key: VITE_APP_NAME              # build-time, public
+        value: My App

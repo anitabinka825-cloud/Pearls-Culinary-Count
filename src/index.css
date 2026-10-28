@@ -1,34 +1,15 @@
-@import "tailwindcss";
-
-@custom-variant dark (&:where(.dark, .dark *));
-
-@theme {
-  --font-serif: "Playfair Display", Georgia, serif;
-  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
-  --color-brand-pink: #DE1B76;
-  --color-brand-pink-hover: #B8125C;
-  --color-brand-pink-light: #FDF2F7;
-  --color-brand-pink-border: #F9A8D4;
-  --color-brand-gold: #C5A059;
-  --color-brand-gold-light: #F8F5EE;
-  --color-brand-dark: #121214;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @layer base {
-  body {
-    font-family: var(--font-sans);
-    color: #1a1a1a;
-  }
-  .dark body {
-    background-color: #121214;
-    color: #f3f4f6;
-  }
-
-  h1, h2, h3, h4, .font-serif {
-    font-family: var(--font-serif);
-  }
-  .dark h1, .dark h2, .dark h3, .dark h4 {
-    color: #ffffff;
-  }
+  body { @apply bg-slate-50 text-slate-900 antialiased; }
 }
 
+@layer components {
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60; }
+  .btn-primary { @apply btn bg-brand-600 text-white hover:bg-brand-700; }
+  .btn-secondary { @apply btn border border-slate-300 bg-white text-slate-700 hover:bg-slate-50; }
+  .input { @apply block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500; }
+  .card { @apply rounded-2xl border border-slate-200 bg-white p-6 shadow-sm; }
+}
